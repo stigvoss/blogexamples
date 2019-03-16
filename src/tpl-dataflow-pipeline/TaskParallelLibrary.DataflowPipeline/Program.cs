@@ -80,13 +80,18 @@ namespace TaskParallelLibrary.DataflowPipeline
             return BitConverter.ToString(hash).Replace("-", "").ToLower();
         }
 
-        private static async Task<string> LoadPage(string page)
+        private static async Task<string> LoadPage(string url)
         {
             try
             {
-                return await Client.GetStringAsync(page);
+                if (url is null)
+                {
+                    return default;
+                }
+
+                return await Client.GetStringAsync(url);
             }
-            catch (Exception)
+            catch (HttpRequestException)
             {
                 return default;
             }
@@ -96,9 +101,14 @@ namespace TaskParallelLibrary.DataflowPipeline
         {
             try
             {
+                if (url is null)
+                {
+                    return default;
+                }
+
                 return await Client.GetByteArrayAsync(url);
             }
-            catch (Exception)
+            catch (HttpRequestException)
             {
                 return default;
             }
