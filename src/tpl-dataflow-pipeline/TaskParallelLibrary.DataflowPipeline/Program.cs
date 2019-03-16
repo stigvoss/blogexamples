@@ -46,7 +46,6 @@ namespace TaskParallelLibrary.DataflowPipeline
             loader.LinkTo(DataflowBlock.NullTarget<string>());
 
             searcher.LinkTo(fetcher, linkOptions, uri => uri.Scheme == "https" || uri.Scheme == "http");
-
             searcher.LinkTo(DataflowBlock.NullTarget<Uri>());
 
             fetcher.LinkTo(hasher, linkOptions, content => content is object);
