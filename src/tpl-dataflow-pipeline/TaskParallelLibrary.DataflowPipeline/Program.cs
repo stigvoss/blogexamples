@@ -32,10 +32,7 @@ namespace TaskParallelLibrary.DataflowPipeline
 
             var converter = new TransformBlock<byte[], string>(TransformHashToHex, executionOptions);
 
-            var printer = new ActionBlock<string>(hash =>
-            {
-                Console.WriteLine(hash);
-            });
+            var printer = new ActionBlock<string>(PrintHash);
 
             var linkOptions = new DataflowLinkOptions
             {
@@ -71,6 +68,11 @@ namespace TaskParallelLibrary.DataflowPipeline
             loader.Complete();
 
             await printer.Completion;
+        }
+
+        private static void PrintHash(string hash)
+        {
+            Console.WriteLine(hash);
         }
 
         private static string TransformHashToHex(byte[] hash)
