@@ -22,13 +22,13 @@ namespace TaskParallelLibrary.DataflowPipeline
                 MaxDegreeOfParallelism = Environment.ProcessorCount
             };
 
-            var loader = new TransformBlock<string, string>(LoadPage, executionOptions);
+            var loader = new TransformBlock<string, string?>(LoadPage, executionOptions);
 
-            var searcher = new TransformManyBlock<string, Uri>(SearchForReferences, executionOptions);
+            var searcher = new TransformManyBlock<string?, Uri>(SearchForReferences, executionOptions);
 
-            var fetcher = new TransformBlock<Uri, byte[]>(FetchReferences, executionOptions);
+            var fetcher = new TransformBlock<Uri, byte[]?>(FetchReferences, executionOptions);
 
-            var hasher = new TransformBlock<byte[], byte[]>(HashAlgorithm.ComputeHash, executionOptions);
+            var hasher = new TransformBlock<byte[]?, byte[]>(HashAlgorithm.ComputeHash, executionOptions);
 
             var converter = new TransformBlock<byte[], string>(TransformHashToHex, executionOptions);
 
@@ -40,13 +40,13 @@ namespace TaskParallelLibrary.DataflowPipeline
             };
 
             loader.LinkTo(searcher, linkOptions, content => content is object);
-            loader.LinkTo(DataflowBlock.NullTarget<string>());
+            loader.LinkTo(DataflowBlock.NullTarget<string?>());
 
             searcher.LinkTo(fetcher, linkOptions, uri => Regex.IsMatch(uri.Scheme, "^https?"));
             searcher.LinkTo(DataflowBlock.NullTarget<Uri>());
 
             fetcher.LinkTo(hasher, linkOptions, content => content is object);
-            fetcher.LinkTo(DataflowBlock.NullTarget<byte[]>());
+            fetcher.LinkTo(DataflowBlock.NullTarget<byte[]?>());
 
             hasher.LinkTo(converter, linkOptions);
 
@@ -80,7 +80,7 @@ namespace TaskParallelLibrary.DataflowPipeline
             return BitConverter.ToString(hash).Replace("-", "").ToLower();
         }
 
-        private static async Task<string> LoadPage(string url)
+        private static async Task<string?> LoadPage(string url)
         {
             try
             {
@@ -97,7 +97,7 @@ namespace TaskParallelLibrary.DataflowPipeline
             }
         }
 
-        private static async Task<byte[]> FetchReferences(Uri url)
+        private static async Task<byte[]?> FetchReferences(Uri url)
         {
             try
             {
@@ -114,7 +114,7 @@ namespace TaskParallelLibrary.DataflowPipeline
             }
         }
 
-        private static IEnumerable<Uri> SearchForReferences(string content)
+        private static IEnumerable<Uri> SearchForReferences(string? content)
         {
             const string Pattern = "src=\"(?<url>.+?)\"";
             var matches = Regex.Matches(content, Pattern, RegexOptions.Singleline | RegexOptions.IgnoreCase);
