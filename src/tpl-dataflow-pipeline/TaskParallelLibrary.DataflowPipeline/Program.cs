@@ -42,8 +42,7 @@ namespace TaskParallelLibrary.DataflowPipeline
             loader.LinkTo(searcher, linkOptions, content => content is object);
             loader.LinkTo(DataflowBlock.NullTarget<string>());
 
-            searcher.LinkTo(fetcher, linkOptions, uri => 
-                Regex.IsMatch(uri.Scheme, "^https?"));
+            searcher.LinkTo(fetcher, linkOptions, uri => Regex.IsMatch(uri.Scheme, "^https?"));
             searcher.LinkTo(DataflowBlock.NullTarget<Uri>());
 
             fetcher.LinkTo(hasher, linkOptions, content => content is object);
@@ -118,8 +117,7 @@ namespace TaskParallelLibrary.DataflowPipeline
         private static IEnumerable<Uri> SearchForReferences(string content)
         {
             const string Pattern = "src=\"(?<url>.+?)\"";
-            var matches = Regex.Matches(content, Pattern,
-                RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matches = Regex.Matches(content, Pattern, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
             return matches.Select(match => match.Groups["url"].Value)
                 .Where(url => Uri.IsWellFormedUriString(url, UriKind.Absolute))
