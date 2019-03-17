@@ -62,7 +62,7 @@ namespace TaskParallelLibrary.DataflowPipeline
 
             foreach (var page in pages)
             {
-                loader.Post(page);
+                await loader.SendAsync(page);
             }
 
             loader.Complete();
