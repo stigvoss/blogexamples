@@ -57,6 +57,7 @@ namespace TaskParallelLibrary.DataflowPipeline
                 "https://arstechnica.com/",
                 "https://www.reddit.com/",
                 "https://www.anandtech.com/",
+                "https://www.theverge.com/",
                 "https://stigvoss.dk"
             };
 
