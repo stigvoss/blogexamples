@@ -30,7 +30,7 @@ namespace TaskParallelLibrary.DataflowPipeline
 
             var hasher = new TransformBlock<byte[]?, byte[]>(HashAlgorithm.ComputeHash, executionOptions);
 
-            var converter = new TransformBlock<byte[], string>(TransformHashToHex, executionOptions);
+            var converter = new TransformBlock<byte[], string>(TransformBytesToHexidecimal, executionOptions);
 
             var printer = new ActionBlock<string>(PrintHash);
 
@@ -76,7 +76,7 @@ namespace TaskParallelLibrary.DataflowPipeline
             Console.WriteLine(hash);
         }
 
-        private static string TransformHashToHex(byte[] hash)
+        private static string TransformBytesToHexidecimal(byte[] hash)
         {
             return BitConverter.ToString(hash).Replace("-", "").ToLower();
         }
